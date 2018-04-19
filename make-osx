@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Echo colors
+GREEN='\033[0;32m'
+NORMAL='\033[0m'
+
+# ProceduralWorld
+echo -e "\n${GREEN}Making ProceduralWorld...${NORMAL}"
+mkdir build
+cd build
+cmake -G Xcode ..
+cd ..
+echo ""
