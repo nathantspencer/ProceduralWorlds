@@ -20,34 +20,37 @@ void Object::Load(std::string path)
     glGenBuffers(1, &m_EBO);
     
     std::vector<Vertex> vertices;
-    std::vector<int> indices;
+    std::vector<unsigned int> indices;
     std::ifstream file(path);
     std::string str;
+    
     Vertex v;
     v.pos = glm::vec3();
+    
     while (std::getline(file, str))
     {
         if (strncmp(str.c_str(), "v ", 2) == 0)
         {
             sscanf(str.c_str(), "v %f %f %f", &v.pos.x, &v.pos.y, &v.pos.z);
+            v.normal = glm::vec3();
             vertices.push_back(v);
         }
         else if (strncmp(str.c_str(), "f ", 2) == 0)
         {
-            int a, b, c;
+            unsigned int a, b, c;
             sscanf(str.c_str(), "f %d %d %d", &a, &b, &c);
             indices.push_back(a - 1);
             indices.push_back(b - 1);
             indices.push_back(c - 1);
         }
     }
-    m_indexSize = indices.size();
     
+    m_indexSize = indices.size();
     for (int f = 0; f < m_indexSize / 3; ++f)
     {
-        int i = indices[3 * f + 0];
-        int j = indices[3 * f + 1];
-        int k = indices[3 * f + 2];
+        unsigned int i = indices[3 * f + 0];
+        unsigned int j = indices[3 * f + 1];
+        unsigned int k = indices[3 * f + 2];
         glm::vec3 p1 = vertices[i].pos;
         glm::vec3 p2 = vertices[j].pos;
         glm::vec3 p3 = vertices[k].pos;
@@ -71,13 +74,13 @@ void Object::Load(std::string path)
     glBindVertexArray(m_VAO);
     
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(offsetof(Vertex, pos)));
     
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(sizeof(glm::vec3)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(offsetof(Vertex, normal)));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);

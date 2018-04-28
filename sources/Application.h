@@ -28,7 +28,6 @@ private:
     
 	void DrawMesh(Object& object);
 
-	Object m_cow;
 	Object m_teapot;
 
 	unsigned int m_program;

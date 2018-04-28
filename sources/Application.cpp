@@ -69,8 +69,8 @@ Application::Application()
         uniform bool u_use_phong;
         uniform bool u_use_texture_map;
     
-		in vec3 a_position;
-		in vec3 a_normal;
+		layout (location = 0) in vec3 a_position;
+		layout (location = 1) in vec3 a_normal;
 
 		uniform mat4 u_transform;
 		uniform mat4 u_viewProjection;
@@ -258,7 +258,6 @@ Application::Application()
     m_use_texture_map = glGetUniformLocation(m_program, "u_use_texture_map");
     m_camera_pos = glGetUniformLocation(m_program, "u_camera_pos");
 
-	m_cow.Load("../../cow.obj");
 	m_teapot.Load("../../terrainTileSmall.obj");
     
     m_cameraPosition = glm::vec3(0.0f, 0.0f, -50.0f);
@@ -363,7 +362,7 @@ void Application::Draw(float time)
 	glm::mat4 transform = glm::mat4(1.0);
 	glUniformMatrix4fv(m_uniform_transform, 1, GL_FALSE, &transform[0][0]);
 
-	glm::mat4 projection = glm::perspective(45.0f, 1.0f, 10.0f, 10000.0f);
+	glm::mat4 projection = glm::perspective(45.0f, 1.0f, 5.0f, 10000.0f);
     glm::mat4 view = glm::mat4();
     
     // Free flying camera
@@ -506,11 +505,11 @@ void Application::Draw(float time)
 
 	//DrawMesh(m_cow);
     
-    DrawMesh(m_teapot);
+  //  DrawMesh(m_teapot);
 
-    for (int i = -20; i < 20; ++i)
+    for (int i = -50; i < 50; ++i)
     {
-        for (int j = -20; j < 20; ++j)
+        for (int j = -50; j < 50; ++j)
         {
             glUniform2f(m_uniform_offset, float(i), float(j));
             transform = glm::translate(glm::mat4(1.0f), glm::vec3(i * 20.0f, -10.0f, j * 20.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(10.0f));
