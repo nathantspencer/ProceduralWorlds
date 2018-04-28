@@ -8,10 +8,16 @@
 #include <vector>
 #include <map>
 
+inline void* ToVoidPointer(int offset)
+{
+    size_t offset_ = static_cast<size_t>(offset);
+    return reinterpret_cast<void*>(offset_);
+}
+
 void Object::Load(std::string path)
 {
-    glGenBuffers(1, &m_vertexBufferObject);
-    glGenBuffers(1, &m_indexBufferObject);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
     
     std::vector<Vertex> vertices;
     std::vector<int> indices;
@@ -24,8 +30,6 @@ void Object::Load(std::string path)
         if (strncmp(str.c_str(), "v ", 2) == 0)
         {
             sscanf(str.c_str(), "v %f %f %f", &v.pos.x, &v.pos.y, &v.pos.z);
-            v.normal = glm::vec3(0);
-            v.uv = glm::vec2();
             vertices.push_back(v);
         }
         else if (strncmp(str.c_str(), "f ", 2) == 0)
@@ -60,28 +64,28 @@ void Object::Load(std::string path)
         vertices[i].normal = glm::normalize(vertices[i].normal);
     }
     
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(m_VAO);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(0));
+    
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(sizeof(glm::vec3)));
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 }
 
 void Object::Draw()
 {
+    glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexSize, GL_UNSIGNED_INT, 0);
-}
-
-void Object::Bind()
-{
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
-}
-
-void Object::UnBind()
-{
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }

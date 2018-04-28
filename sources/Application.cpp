@@ -1,9 +1,3 @@
-// Nathan Spencer
-// CS 470 Assignment 3
-
-// Toggle orbit/free camera using "o" key
-// You begin in free camera mode
-
 #include "Application.h"
 #include "Object.h"
 #include <GL/gl3w.h>
@@ -45,15 +39,17 @@ Application::Application()
 {
 	gl3wInit();
 
-	const char* OpenGLversion = (const char*)glGetString(GL_VERSION);
-	const char* GLSLversion = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	const char* OpenGLversion = (const char*) glGetString(GL_VERSION);
+	const char* GLSLversion = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-	printf("OpenGL %s GLSL: %s", OpenGLversion, GLSLversion);
+	printf("OpenGL %s\nGLSL: %s\n\n", OpenGLversion, GLSLversion);
 
 	glClearColor(0.30f, 0.45f, 0.68f, 1.00f);
 	glClearDepth(1.0f);
 
 	const char* vertex_shader_src = R"(
+        #version 410
+    
         uniform vec4 u_camera_pos;
         uniform vec4 u_mat_ambient;
         uniform vec4 u_mat_diffuse;
@@ -73,21 +69,19 @@ Application::Application()
         uniform bool u_use_phong;
         uniform bool u_use_texture_map;
     
-		attribute vec3 a_position;
-		attribute vec3 a_normal;
-        attribute vec2 a_uv;
+		in vec3 a_position;
+		in vec3 a_normal;
 
 		uniform mat4 u_transform;
 		uniform mat4 u_viewProjection;
 
-		varying vec4 v_normal;
-		varying vec4 v_pos;
-        varying vec2 v_uv;
+		out vec4 v_normal;
+		out vec4 v_pos;
     
         uniform vec2 u_offset;
-        varying float height;
+        out float height;
     
-        float NOISE_GRANULARITY = 0.01;
+        float NOISE_GRANULARITY = 0.02;
         int   OCTAVES = 8;
 
         // Random number in range [0,1)
@@ -145,12 +139,13 @@ Application::Application()
             
             v_normal = normalize(u_transform * vec4(a_normal, 0.0));
             v_pos = u_transform * vec4(heightMappedPos, 1.0);
-            v_uv = a_uv;
+
             gl_Position = u_viewProjection * v_pos;
         }
 	)";
 
 	const char* fragment_shader_src = R"(
+        #version 410
     
         uniform vec3 u_color;
     
@@ -172,63 +167,36 @@ Application::Application()
     
         uniform bool u_use_phong;
         uniform bool u_use_texture_map;
-        uniform sampler2D u_texture;
     
-        varying vec4 v_normal;
-        varying vec4 v_pos;
-        varying vec2 v_uv;
+        in vec4 v_normal;
+        in vec4 v_pos;
     
-        varying float height;
+        in float height;
+    
+        out vec4 fragColor;
 
 		void main()
 		{
-            if (u_use_phong)
-            {
-                vec3 ambient_component = u_mat_ambient.xyz;
-                
-                vec3 v = normalize(u_camera_pos.xyz - v_pos.xyz);
-                vec3 l1 = normalize(u_light_1_pos.xyz - v_pos.xyz);
-                vec3 l2 = normalize(u_light_2_pos.xyz - v_pos.xyz);
-                vec3 r1 = (v_normal.xyz * 2.0 * dot(l1, v_normal.xyz)) - l1;
-                vec3 r2 = (v_normal.xyz * 2.0 * dot(l2, v_normal.xyz)) - l2;
-                
-                vec3 mat_diffuse = u_mat_diffuse.xyz;
-                if (u_use_texture_map)
-                {
-                   mat_diffuse = texture2D(u_texture, v_uv.xy).rgb;
-                }
+            vec3 ambient_component = u_mat_ambient.xyz;
+            
+            vec3 v = normalize(u_camera_pos.xyz - v_pos.xyz);
+            vec3 l1 = normalize(u_light_1_pos.xyz - v_pos.xyz);
+            vec3 l2 = normalize(u_light_2_pos.xyz - v_pos.xyz);
+            vec3 r1 = (v_normal.xyz * 2.0 * dot(l1, v_normal.xyz)) - l1;
+            vec3 r2 = (v_normal.xyz * 2.0 * dot(l2, v_normal.xyz)) - l2;
+            
+            vec3 mat_diffuse = u_mat_diffuse.xyz;
 
-                vec3 diffuse_light_1 = u_light_1_diffuse.xyz * mat_diffuse.xyz * max(dot(l1, v_normal.xyz), 0.0);
-                vec3 diffuse_light_2 = u_light_2_diffuse.xyz * mat_diffuse.xyz * max(dot(l2, v_normal.xyz), 0.0);
-                vec3 diffuse_component = diffuse_light_1 + diffuse_light_2;
-                
-                vec3 specular_light_1 = u_light_1_specular.xyz * u_mat_specular.xyz * pow(max(dot(r1, v), 0.0), u_mat_shininess);
-                vec3 specular_light_2 = u_light_2_specular.xyz * u_mat_specular.xyz * pow(max(dot(r2, v), 0.0), u_mat_shininess);
-                vec3 specular_component = specular_light_1 + specular_light_2;
-                
-                gl_FragColor = vec4(ambient_component + diffuse_component + specular_component + (abs(height) / 400.0), 1.0);
-            }
-            else
-            {
-                if (u_use_texture_map)
-                {
-                    vec3 v = normalize(u_camera_pos.xyz - v_pos.xyz);
-                    vec3 l1 = normalize(u_light_1_pos.xyz - v_pos.xyz);
-                    vec3 l2 = normalize(u_light_2_pos.xyz - v_pos.xyz);
-                    
-                    vec3 mat_diffuse = texture2D(u_texture, v_uv.xy).rgb;
-                    vec3 diffuse_light_1 = u_light_1_diffuse.xyz * mat_diffuse.xyz * max(dot(l1, v_normal.xyz), 0.0);
-                    vec3 diffuse_light_2 = u_light_2_diffuse.xyz * mat_diffuse.xyz * max(dot(l2, v_normal.xyz), 0.0);
-                    vec3 diffuse_component = diffuse_light_1 + diffuse_light_2;
-                    
-                    gl_FragColor = gl_Color + vec4(diffuse_component, 1.0);
-                }
-                else
-                {
-                    gl_FragColor = gl_Color;
-                }
-            }
-		}
+            vec3 diffuse_light_1 = u_light_1_diffuse.xyz * mat_diffuse.xyz * max(dot(l1, v_normal.xyz), 0.0);
+            vec3 diffuse_light_2 = u_light_2_diffuse.xyz * mat_diffuse.xyz * max(dot(l2, v_normal.xyz), 0.0);
+            vec3 diffuse_component = diffuse_light_1 + diffuse_light_2;
+            
+            vec3 specular_light_1 = u_light_1_specular.xyz * u_mat_specular.xyz * pow(max(dot(r1, v), 0.0), u_mat_shininess);
+            vec3 specular_light_2 = u_light_2_specular.xyz * u_mat_specular.xyz * pow(max(dot(r2, v), 0.0), u_mat_shininess);
+            vec3 specular_component = specular_light_1 + specular_light_2;
+            
+            fragColor = vec4(ambient_component + diffuse_component + specular_component + (abs(height) / 400.0), 1.0);
+        }
 	)";
 
 	int vertex_shader_handle = CompileShader(vertex_shader_src, GL_VERTEX_SHADER);
@@ -262,10 +230,6 @@ Application::Application()
 	glDeleteShader(vertex_shader_handle);
 	glDeleteShader(fragment_shader_handle);
 
-	m_attrib_pos = glGetAttribLocation(m_program, "a_position");
-	m_attrib_normal = glGetAttribLocation(m_program, "a_normal");
-    m_attrib_uv = glGetAttribLocation(m_program, "a_uv");
-
 	m_uniform_transform = glGetUniformLocation(m_program, "u_transform");
 	m_uniform_viewProjection = glGetUniformLocation(m_program, "u_viewProjection");
 	
@@ -295,7 +259,7 @@ Application::Application()
     m_camera_pos = glGetUniformLocation(m_program, "u_camera_pos");
 
 	m_cow.Load("../../cow.obj");
-	m_teapot.Load("../../terrainTile.obj");
+	m_teapot.Load("../../terrainTileSmall.obj");
     
     m_cameraPosition = glm::vec3(0.0f, 0.0f, -50.0f);
     m_orbitCameraPosition = m_cameraPosition;
@@ -388,8 +352,9 @@ void Application::Draw(float time)
     float deltaTime = time - m_lastTime;
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_CULL_FACE);
 	
+    glCullFace(GL_BACK);
+    
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
@@ -540,6 +505,8 @@ void Application::Draw(float time)
 	glUniformMatrix4fv(m_uniform_viewProjection, 1, GL_FALSE, &viewProjection[0][0]);
 
 	//DrawMesh(m_cow);
+    
+    DrawMesh(m_teapot);
 
     for (int i = -20; i < 20; ++i)
     {
@@ -614,23 +581,5 @@ void Application::SetMaterial(int materialIndex)
 void Application::DrawMesh(Object& object)
 {
     glUniform1i(m_use_texture_map, 0);
-    
-	object.Bind();
-
-	glEnableVertexAttribArray(m_attrib_pos);
-    glVertexAttribPointer(m_attrib_pos, 3, GL_FLOAT, GL_FALSE, sizeof(Object::Vertex), ToVoidPointer(0));
-
-	glEnableVertexAttribArray(m_attrib_normal);
-    glVertexAttribPointer(m_attrib_normal, 3, GL_FLOAT, GL_FALSE, sizeof(Object::Vertex), ToVoidPointer(sizeof(glm::vec3)));
-    
-    glEnableVertexAttribArray(m_attrib_uv);
-    glVertexAttribPointer(m_attrib_uv, 2, GL_FLOAT, GL_FALSE, sizeof(Object::Vertex), ToVoidPointer(2 * sizeof(glm::vec3)));
-
 	object.Draw();
-
-	glDisableVertexAttribArray(m_attrib_pos);
-	glDisableVertexAttribArray(m_attrib_normal);
-    glDisableVertexAttribArray(m_attrib_uv);
-
-	object.UnBind();
 }

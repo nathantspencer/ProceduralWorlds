@@ -32,9 +32,6 @@ private:
 	Object m_teapot;
 
 	unsigned int m_program;
-	unsigned int m_attrib_pos;
-	unsigned int m_attrib_normal;
-    unsigned int m_attrib_uv;
     unsigned int m_uniform_offset;
 	unsigned int m_uniform_transform;
 	unsigned int m_uniform_viewProjection;

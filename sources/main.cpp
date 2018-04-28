@@ -14,15 +14,20 @@ int main()
 
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 	glfwWindowHint(GLFW_RED_BITS, 8);
+    
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(1024, 1024, "CS 470 Final Project", NULL, NULL);
-
-	/* Make the window's context current */
+    window = glfwCreateWindow(1280, 800, "ProceduralWorlds: Mountains", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	
-    std::shared_ptr<Application> app = std::make_shared<Application>();
-    glfwSetWindowUserPointer(window, (void*)app.get());
+    std::shared_ptr<Application> application = std::make_shared<Application>();
+    glfwSetWindowUserPointer(window, (void*) application.get());
     
     glfwSetKeyCallback(window, [](GLFWwindow* window, int keycode, int scancode, int event, int modifiers)
     {
@@ -48,11 +53,11 @@ int main()
     
     int materialIndex = 0;
     int lastMaterialIndex = 0;
-    app->SetMaterial(materialIndex);
+    application->SetMaterial(materialIndex);
     
     int shadingModel = 0;
     int lastShadingModel = 0;
-    app->SetShadingModel(shadingModel);
+    application->SetShadingModel(shadingModel);
     
     float lightHeight = 50.0f;
     float lastLightHeight = 50.0f;
@@ -68,47 +73,44 @@ int main()
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        /* Poll for and process events */
-        glfwPollEvents();
-        
         auto current_timestamp = std::chrono::steady_clock::now();
         std::chrono::duration<float> elapsed_time = (current_timestamp - start);
         
         if (materialIndex != lastMaterialIndex)
         {
-            app->SetMaterial(materialIndex);
+            application->SetMaterial(materialIndex);
             lastMaterialIndex = materialIndex;
         }
         if (shadingModel != lastShadingModel)
         {
-            app->SetShadingModel(shadingModel);
+            application->SetShadingModel(shadingModel);
             lastShadingModel = shadingModel;
         }
         if (lightHeight != lastLightHeight)
         {
-            app->SetLight2Height(lightHeight);
+            application->SetLight2Height(lightHeight);
             lastLightHeight = lightHeight;
         }
         if (lightRadius != lastLightRadius)
         {
-            app->SetLight2Radius(lightRadius);
+            application->SetLight2Radius(lightRadius);
             lastLightRadius = lightRadius;
         }
         if (lightAngle != lastLightAngle)
         {
-            app->SetLight2Angle(lightAngle);
+            application->SetLight2Angle(lightAngle);
             lastLightAngle = lightAngle;
         }
         
-        app->Draw(elapsed_time.count());
+        application->Draw(elapsed_time.count());
         
         if (firstPass)
         {
             firstPass = false;
-            app->SetMaterial(0);
+            application->SetMaterial(0);
         }
         
-        /* Swap front and back buffers */
+        glfwPollEvents();
         glfwSwapBuffers(window);
     }
 
