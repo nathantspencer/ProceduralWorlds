@@ -130,15 +130,23 @@ Application::Application()
 
         void main()
         {
-            vec2 st = vec2(a_position.x + 2.0 * u_offset.x, a_position.z + 2.0 * u_offset.y);
+            int offsetX = (gl_InstanceID / 100) - 50;
+            int offsetY = (gl_InstanceID % 100) - 50;
+            
+            vec2 st = vec2(a_position.x + 2.0 * offsetX, a_position.z + 2.0 * offsetY);
             st *= NOISE_GRANULARITY;
             vec3 heightMappedPos = a_position;
             heightMappedPos.y += ridge(st);
             
             height = heightMappedPos.y;
             
+            heightMappedPos *= 10.0f;
+            heightMappedPos.x += 20.0f * offsetX;
+            heightMappedPos.z += 20.0f * offsetY;
+            heightMappedPos.y -= 10.0f;
+            
             v_normal = normalize(u_transform * vec4(a_normal, 0.0));
-            v_pos = u_transform * vec4(heightMappedPos, 1.0);
+            v_pos = vec4(heightMappedPos, 1.0);
 
             gl_Position = u_viewProjection * v_pos;
         }
@@ -445,18 +453,7 @@ void Application::Draw(float time, float aspect)
     
   //  DrawMesh(m_teapot);
 
-    for (int i = -50; i < 50; ++i)
-    {
-        for (int j = -50; j < 50; ++j)
-        {
-            glUniform2f(m_uniform_offset, float(i), float(j));
-            transform = glm::translate(glm::mat4(1.0f), glm::vec3(i * 20.0f, -10.0f, j * 20.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(10.0f));
-            glUniformMatrix4fv(m_uniform_transform, 1, GL_FALSE, &transform[0][0]);
-            
-            DrawMesh(m_teapot);
-        }
-    }
-
+    DrawMesh(m_teapot);
     
     m_previousDrawMousePosition = m_currentMousePosition;
     m_lastTime = time;

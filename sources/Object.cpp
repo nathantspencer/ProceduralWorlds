@@ -89,6 +89,6 @@ void Object::Load(std::string path)
 void Object::Draw()
 {
     glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, m_indexSize, GL_UNSIGNED_INT, 0);
+    glDrawElementsInstanced(GL_TRIANGLES, m_indexSize, GL_UNSIGNED_INT, 0, 10000);
     glBindVertexArray(0);
 }
