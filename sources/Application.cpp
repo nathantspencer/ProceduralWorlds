@@ -346,9 +346,11 @@ inline void* ToVoidPointer(int offset)
 	return reinterpret_cast<void*>(offset_);
 }
 
-void Application::Draw(float time)
+void Application::Draw(float time, float aspect)
 {
     float deltaTime = time - m_lastTime;
+    int fps = (int) (1.0f / deltaTime);
+    fprintf(stderr, "\nFPS: %d", (int)fps);
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -362,7 +364,7 @@ void Application::Draw(float time)
 	glm::mat4 transform = glm::mat4(1.0);
 	glUniformMatrix4fv(m_uniform_transform, 1, GL_FALSE, &transform[0][0]);
 
-	glm::mat4 projection = glm::perspective(45.0f, 1.0f, 5.0f, 10000.0f);
+	glm::mat4 projection = glm::perspective(45.0f, aspect, 5.0f, 10000.0f);
     glm::mat4 view = glm::mat4();
     
     // Free flying camera

@@ -10,7 +10,7 @@ public:
 	Application();
 	~Application();
 
-	void Draw(float time);
+	void Draw(float time, float aspect);
     
     void KeyCallback(int keycode, int event);
     void MouseButtonCallback(int buttoncode, int event);

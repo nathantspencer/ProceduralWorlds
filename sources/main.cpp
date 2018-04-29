@@ -102,7 +102,11 @@ int main()
             lastLightAngle = lightAngle;
         }
         
-        application->Draw(elapsed_time.count());
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        float aspect = (float) width / height;
+        
+        application->Draw(elapsed_time.count(), aspect);
         
         if (firstPass)
         {
