@@ -42,13 +42,8 @@ private:
     float   m_lastTime;
     
     glm::vec3   m_cameraPosition;
-    glm::vec3   m_orbitCameraPosition;
     float       m_cameraAzimuth;
     float       m_cameraAltitude;
-    float       m_orbitCameraAzimuth;
-    float       m_orbitCameraAltitude;
-    float       m_orbitRadius;
-    float       m_deltaOrbitRadius;
     
     unsigned int m_camera_pos;
     unsigned int m_use_phong;
@@ -79,5 +74,4 @@ private:
     
     std::map<char, bool>    m_isKeyPressed;
     bool                    m_isMouseButtonPressed;
-    bool                    m_useOrbitView;
 };

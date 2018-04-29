@@ -258,10 +258,9 @@ Application::Application()
     m_use_texture_map = glGetUniformLocation(m_program, "u_use_texture_map");
     m_camera_pos = glGetUniformLocation(m_program, "u_camera_pos");
 
-	m_teapot.Load("../../terrainTileSmall.obj");
+	m_teapot.Load("../../terrainTile.obj");
     
     m_cameraPosition = glm::vec3(0.0f, 0.0f, -50.0f);
-    m_orbitCameraPosition = m_cameraPosition;
     m_cameraAzimuth = 0.0f;
     m_cameraAltitude = 0.0f;
     
@@ -275,11 +274,6 @@ Application::Application()
     m_isKeyPressed['D'] = false;
     
     m_isMouseButtonPressed = false;
-    m_useOrbitView = false;
-    m_orbitRadius = 50.0f;
-    m_deltaOrbitRadius = 0.0f;
-    m_orbitCameraAzimuth = 0.0f;
-    m_orbitCameraAltitude = 0.0f;
     
     m_light2Angle = 0.0f;
     m_light2Height = 50.0f;
@@ -289,14 +283,7 @@ Application::Application()
 void Application::KeyCallback(int keycode, int event)
 {
     char character = char(keycode);
-    if (character == 'O' && event == 1)
-    {
-        m_useOrbitView = !m_useOrbitView;
-    }
-    else
-    {
-        m_isKeyPressed[character] = bool(event);
-    }
+    m_isKeyPressed[character] = bool(event);
 }
 
 void Application::MouseButtonCallback(int buttoncode, int event)
@@ -314,10 +301,6 @@ void Application::CursorPosCallback(float x, float y)
 
 void Application::ScrollCallback(float x, float y)
 {
-    if (m_useOrbitView)
-    {
-        m_deltaOrbitRadius += y;
-    }
 }
 
 void Application::SetLight2Radius(float radius)
@@ -367,129 +350,82 @@ void Application::Draw(float time, float aspect)
 	glm::mat4 projection = glm::perspective(45.0f, aspect, 5.0f, 10000.0f);
     glm::mat4 view = glm::mat4();
     
-    // Free flying camera
-    if(!m_useOrbitView)
-    {
-        // Determine azimuth and altitude angles
-        float deltaAzimuth;
-        float deltaAltitude;
-        
-        if (m_isMouseButtonPressed)
-        {
-            float sensitivityModifier = 0.1f;
-            
-            deltaAzimuth = (m_currentMousePosition.x - m_previousDrawMousePosition.x) * m_sensitivity * deltaTime * sensitivityModifier;
-            m_cameraAzimuth += deltaAzimuth;
-            
-            deltaAltitude = (m_currentMousePosition.y - m_previousDrawMousePosition.y) * m_sensitivity * deltaTime * sensitivityModifier;
-            m_cameraAltitude += deltaAltitude;
-        }
-        
-        if (m_cameraAltitude > 90.0f)
-        {
-            m_cameraAltitude = 90.f;
-        }
-        else if (m_cameraAltitude < -90.0f)
-        {
-            m_cameraAltitude = -90.0f;
-        }
-        
-        glm::mat4 azimuthViewTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraAzimuth), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 altitudeViewTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraAltitude), glm::vec3(1.0f, 0.0f, 0.0f));
-        
-        // Determine translation
-        glm::vec3 deltaTranslation = glm::vec3();
-        
-        if (m_isKeyPressed['W'])
-        {
-            deltaTranslation.z += m_sensitivity * deltaTime;
-        }
-        if (m_isKeyPressed['S'])
-        {
-            deltaTranslation.z -= m_sensitivity * deltaTime;
-        }
-        if (m_isKeyPressed['A'])
-        {
-            deltaTranslation.x += m_sensitivity * deltaTime;
-        }
-        if (m_isKeyPressed['D'])
-        {
-            deltaTranslation.x -= m_sensitivity * deltaTime;
-        }
-        
-        // move cylinder light around
-        float deltaHeight = 0.0f;
-        float deltaAngle = 0.0f;
-        if (m_isKeyPressed['I'])
-        {
-            deltaHeight += m_sensitivity * deltaTime * 2.0f;
-        }
-        if (m_isKeyPressed['K'])
-        {
-            deltaHeight -= m_sensitivity * deltaTime * 2.0f;
-        }
-        if (m_isKeyPressed['J'])
-        {
-            deltaAngle -= m_sensitivity * deltaTime / 20.0f;
-        }
-        if (m_isKeyPressed['L'])
-        {
-            deltaAngle += m_sensitivity * deltaTime / 20.0f;
-        }
-        
-        m_light2Height += deltaHeight;
-        m_light2Angle += deltaAngle;
-        
-        deltaTranslation = glm::vec3(glm::transpose(altitudeViewTransform * azimuthViewTransform) * glm::vec4(deltaTranslation, 0.0f));
-        m_cameraPosition += deltaTranslation;
+    // Determine azimuth and altitude angles
+    float deltaAzimuth;
+    float deltaAltitude;
     
-        glm::mat4 translationViewTransform = glm::translate(glm::mat4(1.0f), m_cameraPosition);
+    if (m_isMouseButtonPressed)
+    {
+        float sensitivityModifier = 0.1f;
         
-        view = altitudeViewTransform * azimuthViewTransform * translationViewTransform;
+        deltaAzimuth = (m_currentMousePosition.x - m_previousDrawMousePosition.x) * m_sensitivity * deltaTime * sensitivityModifier;
+        m_cameraAzimuth += deltaAzimuth;
+        
+        deltaAltitude = (m_currentMousePosition.y - m_previousDrawMousePosition.y) * m_sensitivity * deltaTime * sensitivityModifier;
+        m_cameraAltitude += deltaAltitude;
     }
     
-    // Orbit view
-    else
+    if (m_cameraAltitude > 90.0f)
     {
-        // Determine radius
-        m_orbitRadius -= m_deltaOrbitRadius * m_sensitivity * deltaTime;
-        m_deltaOrbitRadius = 0.0f;
-        if(m_orbitRadius < 0.0f)
-        {
-            m_orbitRadius = 0.0f;
-        }
-        
-        // Determine azimuth and altitude angles
-        float deltaAzimuth;
-        float deltaAltitude;
-        
-        if (m_isMouseButtonPressed)
-        {
-            float sensitivityModifier = 0.1f;
-            
-            deltaAzimuth = (m_currentMousePosition.x - m_previousDrawMousePosition.x) * m_sensitivity * deltaTime * sensitivityModifier;
-            m_orbitCameraAzimuth += deltaAzimuth;
-            
-            deltaAltitude = (m_currentMousePosition.y - m_previousDrawMousePosition.y) * m_sensitivity * deltaTime * sensitivityModifier;
-            m_orbitCameraAltitude += deltaAltitude;
-        }
-        
-        if (m_orbitCameraAltitude > 90.0f)
-        {
-            m_orbitCameraAltitude = 90.f;
-        }
-        else if (m_orbitCameraAltitude < -90.0f)
-        {
-            m_orbitCameraAltitude = -90.0f;
-        }
-        
-        glm::mat4 azimuthViewTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_orbitCameraAzimuth), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 altitudeViewTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_orbitCameraAltitude), glm::vec3(1.0f, 0.0f, 0.0f));
-        
-        m_orbitCameraPosition = glm::vec3(0.0f, 0.0f, -m_orbitRadius);
-        glm::mat4 translationViewTransform = glm::translate(glm::mat4(1.0f), m_orbitCameraPosition);
-        view = translationViewTransform * altitudeViewTransform * azimuthViewTransform;
+        m_cameraAltitude = 90.f;
     }
+    else if (m_cameraAltitude < -90.0f)
+    {
+        m_cameraAltitude = -90.0f;
+    }
+    
+    glm::mat4 azimuthViewTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraAzimuth), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 altitudeViewTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraAltitude), glm::vec3(1.0f, 0.0f, 0.0f));
+    
+    // Determine translation
+    glm::vec3 deltaTranslation = glm::vec3();
+    
+    if (m_isKeyPressed['W'])
+    {
+        deltaTranslation.z += m_sensitivity * deltaTime;
+    }
+    if (m_isKeyPressed['S'])
+    {
+        deltaTranslation.z -= m_sensitivity * deltaTime;
+    }
+    if (m_isKeyPressed['A'])
+    {
+        deltaTranslation.x += m_sensitivity * deltaTime;
+    }
+    if (m_isKeyPressed['D'])
+    {
+        deltaTranslation.x -= m_sensitivity * deltaTime;
+    }
+    
+    // move cylinder light around
+    float deltaHeight = 0.0f;
+    float deltaAngle = 0.0f;
+    if (m_isKeyPressed['I'])
+    {
+        deltaHeight += m_sensitivity * deltaTime * 2.0f;
+    }
+    if (m_isKeyPressed['K'])
+    {
+        deltaHeight -= m_sensitivity * deltaTime * 2.0f;
+    }
+    if (m_isKeyPressed['J'])
+    {
+        deltaAngle -= m_sensitivity * deltaTime / 20.0f;
+    }
+    if (m_isKeyPressed['L'])
+    {
+        deltaAngle += m_sensitivity * deltaTime / 20.0f;
+    }
+    
+    m_light2Height += deltaHeight;
+    m_light2Angle += deltaAngle;
+    
+    deltaTranslation = glm::vec3(glm::transpose(altitudeViewTransform * azimuthViewTransform) * glm::vec4(deltaTranslation, 0.0f));
+    m_cameraPosition += deltaTranslation;
+
+    glm::mat4 translationViewTransform = glm::translate(glm::mat4(1.0f), m_cameraPosition);
+    
+    view = altitudeViewTransform * azimuthViewTransform * translationViewTransform;
     
     glUniform4f(m_camera_pos, m_cameraPosition.x, m_cameraPosition.y, m_cameraPosition.z, 1.0f);
     glUniform4f(m_light_1_pos, m_cameraPosition.x, m_cameraPosition.y, m_cameraPosition.z, 1.0f);
