@@ -266,7 +266,7 @@ Application::Application()
     m_use_texture_map = glGetUniformLocation(m_program, "u_use_texture_map");
     m_camera_pos = glGetUniformLocation(m_program, "u_camera_pos");
 
-	m_teapot.Load("../../terrainTile.obj");
+	m_teapot.Load("../../terrainTileSmall.obj");
     
     m_cameraPosition = glm::vec3(0.0f, 0.0f, -50.0f);
     m_cameraAzimuth = 0.0f;
