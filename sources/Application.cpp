@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "Object.h"
+#include "Terrain/MountainTerrainTile.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -512,7 +512,7 @@ void Application::SetMaterial(int materialIndex)
     }
 }
 
-void Application::DrawMesh(Object& object)
+void Application::DrawMesh(MountainTerrainTile& object)
 {
     glUniform1i(m_use_texture_map, 0);
 	object.Draw();

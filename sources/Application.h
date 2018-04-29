@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include <glm/glm.hpp>
-#include "Object.h"
+#include "Terrain/MountainTerrainTile.h"
 
 class Application
 {
@@ -26,9 +26,9 @@ public:
 
 private:
     
-	void DrawMesh(Object& object);
+	void DrawMesh(MountainTerrainTile& object);
 
-	Object m_teapot;
+	MountainTerrainTile m_teapot;
 
 	unsigned int m_program;
     unsigned int m_uniform_offset;

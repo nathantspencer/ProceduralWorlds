@@ -4,7 +4,7 @@
 #include <GL/gl3w.h>
 #include <glm/glm.hpp>
 
-class Object
+class MountainTerrainTile
 {
 public:
     

@@ -8,8 +8,7 @@
 int main()
 {
 	GLFWwindow* window;
-
-	/* Initialize the library */
+    
 	glfwInit();
 
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
@@ -51,13 +50,8 @@ int main()
 
     auto start = std::chrono::steady_clock::now();
     
-    int materialIndex = 0;
-    int lastMaterialIndex = 0;
-    application->SetMaterial(materialIndex);
-    
-    int shadingModel = 0;
-    int lastShadingModel = 0;
-    application->SetShadingModel(shadingModel);
+    application->SetMaterial(0);
+    application->SetShadingModel(0);
     
     float lightHeight = 50.0f;
     float lastLightHeight = 50.0f;
@@ -70,22 +64,11 @@ int main()
     
     bool firstPass = true;
     
-    /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         auto current_timestamp = std::chrono::steady_clock::now();
         std::chrono::duration<float> elapsed_time = (current_timestamp - start);
         
-        if (materialIndex != lastMaterialIndex)
-        {
-            application->SetMaterial(materialIndex);
-            lastMaterialIndex = materialIndex;
-        }
-        if (shadingModel != lastShadingModel)
-        {
-            application->SetShadingModel(shadingModel);
-            lastShadingModel = shadingModel;
-        }
         if (lightHeight != lastLightHeight)
         {
             application->SetLight2Height(lightHeight);

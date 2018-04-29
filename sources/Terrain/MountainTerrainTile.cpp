@@ -1,5 +1,5 @@
 #include <GL/gl3w.h>
-#include "Object.h"
+#include "MountainTerrainTile.h"
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,7 +14,7 @@ inline void* ToVoidPointer(int offset)
     return reinterpret_cast<void*>(offset_);
 }
 
-void Object::Load(std::string path)
+void MountainTerrainTile::Load(std::string path)
 {
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
@@ -86,7 +86,7 @@ void Object::Load(std::string path)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 }
 
-void Object::Draw()
+void MountainTerrainTile::Draw()
 {
     glBindVertexArray(m_VAO);
     glDrawElementsInstanced(GL_TRIANGLES, m_indexSize, GL_UNSIGNED_INT, 0, 10000);

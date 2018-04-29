@@ -6,6 +6,7 @@ NORMAL='\033[0m'
 
 # ProceduralWorld
 echo -e "\n${GREEN}Making ProceduralWorld...${NORMAL}"
+rm -rf build
 mkdir build
 cd build
 cmake -G Xcode ..
