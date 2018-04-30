@@ -466,50 +466,16 @@ void Application::SetShadingModel(int shadingModel)
 
 void Application::SetMaterial(int materialIndex)
 {
-    // shiny red balloon
-    if (materialIndex == 2)
-    {
-        glUniform4f(m_mat_ambient, 0.6, 0.2, 0.2, 1.0);
-        glUniform4f(m_mat_diffuse, 0.9, 0.1, 0.1, 1.0);
-        glUniform4f(m_mat_specular, 0.8, 0.8, 0.8, 1.0);
-        glUniform1f(m_mat_shininess, 80.0);
-        glUniform4f(m_light_1_ambient, 0.2, 0.2, 0.2, 1.0);
-        glUniform4f(m_light_1_diffuse, 0.6, 0.6, 0.6, 1.0);
-        glUniform4f(m_light_1_specular, 1.0, 1.0, 1.0, 1.0);
-        glUniform4f(m_light_2_ambient, 0.2, 0.2, 0.2, 1.0);
-        glUniform4f(m_light_2_diffuse, 0.6, 0.6, 0.6, 1.0);
-        glUniform4f(m_light_2_specular, 1.0, 1.0, 1.0, 1.0);
-    }
-    
-    // dream surface
-    else if (materialIndex == 1)
-    {
-        glUniform4f(m_mat_ambient, 0.5, 0.4, 0.2, 1.0);
-        glUniform4f(m_mat_diffuse, 0.4, 0.7, 0.4, 1.0);
-        glUniform4f(m_mat_specular, 0.0, 0.2, 0.3, 1.0);
-        glUniform1f(m_mat_shininess, 5.0);
-        glUniform4f(m_light_1_ambient, 0.3, 0.2, 0.2, 1.0);
-        glUniform4f(m_light_1_diffuse, 0.3, 0.8, 0.3, 1.0);
-        glUniform4f(m_light_1_specular, 0.75, 0.75, 1.0, 1.0);
-        glUniform4f(m_light_2_ambient, 0.3, 0.2, 0.2, 1.0);
-        glUniform4f(m_light_2_diffuse, 0.3, 0.8, 0.3, 1.0);
-        glUniform4f(m_light_2_specular, 0.75, 0.75, 1.0, 1.0);
-    }
-    
-    // matte charcoal
-    else if (materialIndex == 0)
-    {
-        glUniform4f(m_mat_ambient, 0.025, 0.175, 0.05, 1.0);
-        glUniform4f(m_mat_diffuse, 0.5, 0.7, 0.5, 1.0);
-        glUniform4f(m_mat_specular, 0.1, 0.2, 0.1, 1.0);
-        glUniform1f(m_mat_shininess, 1.0);
-        glUniform4f(m_light_1_ambient, 0.1, 0.1, 0.1, 1.0);
-        glUniform4f(m_light_1_diffuse, 0.4, 0.4, 0.4, 1.0);
-        glUniform4f(m_light_1_specular, 0.2, 0.2, 0.2, 1.0);
-        glUniform4f(m_light_2_ambient, 0.1, 0.1, 0.1, 1.0);
-        glUniform4f(m_light_2_diffuse, 0.5, 0.5, 0.5, 1.0);
-        glUniform4f(m_light_2_specular, 0.2, 0.2, 0.2, 1.0);
-    }
+    glUniform4f(m_mat_ambient, 0.025, 0.175, 0.05, 1.0);
+    glUniform4f(m_mat_diffuse, 0.5, 0.7, 0.5, 1.0);
+    glUniform4f(m_mat_specular, 0.1, 0.2, 0.1, 1.0);
+    glUniform1f(m_mat_shininess, 1.0);
+    glUniform4f(m_light_1_ambient, 0.1, 0.1, 0.1, 1.0);
+    glUniform4f(m_light_1_diffuse, 0.4, 0.4, 0.4, 1.0);
+    glUniform4f(m_light_1_specular, 0.2, 0.2, 0.2, 1.0);
+    glUniform4f(m_light_2_ambient, 0.1, 0.1, 0.1, 1.0);
+    glUniform4f(m_light_2_diffuse, 0.5, 0.5, 0.5, 1.0);
+    glUniform4f(m_light_2_specular, 0.2, 0.2, 0.2, 1.0);
 }
 
 void Application::DrawMesh(MountainTerrainTile& object)
