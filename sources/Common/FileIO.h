@@ -2,7 +2,7 @@
 
 #include <string>
 
-/*! A collection of functions for reading and writing files. \file
+/*! Functions for reading from and writing to files. \file
  */
 namespace FileIO
 {
