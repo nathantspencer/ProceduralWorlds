@@ -1,5 +1,8 @@
-#include "Application.h"
-#include "Terrain/MountainTerrainTile.h"
+#include <Application.h>
+#include <Terrain/MountainTerrainTile.h>
+
+#include <Shading/ShaderLibrary.h>
+
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -38,6 +41,9 @@ GLuint CompileShader(const char* src, GLint type)
 Application::Application()
 {
 	gl3wInit();
+    
+    ShaderLibrary s = ShaderLibrary();
+    s.AddShader(fs::path("../../shaders/mountainTerrain.fs.glsl"));
 
 	const char* OpenGLversion = (const char*) glGetString(GL_VERSION);
 	const char* GLSLversion = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION);

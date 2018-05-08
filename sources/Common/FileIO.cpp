@@ -1,10 +1,16 @@
-#include "FileIO.h"
+#include <Common/FileIO.h>
 
 #include <fstream>
 
-std::string FileIO::ReadFileToString(const std::string& path)
+std::string FileIO::ReadFileToString(const fs::path& path)
 {
-    std::ifstream fileStream(path);
+    std::ifstream fileStream(path.string());
+    if(!fileStream.is_open())
+    {
+        // TODO: write error to console
+        return "";
+    }
+    
     fileStream.seekg(0, std::ios::end);
     size_t size = fileStream.tellg();
     

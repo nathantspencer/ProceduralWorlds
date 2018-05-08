@@ -1,8 +1,8 @@
 #pragma once
 
-#include <boost/filesystem.hpp>
-#include <GL/gl3w.h>
+#include <Common/FileIO.h>
 
+#include <GL/gl3w.h>
 #include <map>
 #include <string>
 
@@ -20,14 +20,14 @@ public:
      *
      * @param  path  the string path to the GLSL shader file to be added
      */
-    void AddShader(const std::string& path);
+    void AddShader(const fs::path& path);
     
     /*! Returns the handle for the shader with the given name.
      *
      * @param   name  the name of the shader whose handle to return, e.g. "ShaderName.fs"
      * @return  the handle for the selected shader
      */
-    GLuint GetShaderHandle(const std::string& name) const;
+    GLuint GetShaderHandle(const std::string& name);
 
 private:
     

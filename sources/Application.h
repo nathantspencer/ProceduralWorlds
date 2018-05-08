@@ -1,9 +1,12 @@
 #pragma once
-#include <string>
-#include <map>
+
+#include <Common/FileIO.h>
+#include <Terrain/MountainTerrainTile.h>
+
 #include <glm/glm.hpp>
-#include "Terrain/MountainTerrainTile.h"
-#include "Common/FileIO.h"
+#include <map>
+#include <string>
+
 class Application
 {
 public:

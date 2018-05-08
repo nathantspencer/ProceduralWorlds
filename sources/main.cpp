@@ -1,9 +1,8 @@
-#include "Application.h"
+#include <Application.h>
 
-#include <GLFW/glfw3.h>
-
-#include <memory>
 #include <chrono>
+#include <GLFW/glfw3.h>
+#include <memory>
 
 int main()
 {
