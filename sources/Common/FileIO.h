@@ -1,9 +1,6 @@
 #pragma once
 
-#include <boost/filesystem.hpp>
 #include <string>
-
-namespace fs = boost::filesystem;
 
 /*! Functions for reading from and writing to files. \file
  *
@@ -14,8 +11,8 @@ namespace FileIO
 {
     /*! Reads the contents of an ASCII file into a string.
      *
-     * @param   path  the path to the ASCII file from which to read
+     * @param   path  the string path to the ASCII file from which to read
      * @return  a string containing the ASCII contents of the file at the given path
      */
-    std::string ReadFileToString(const fs::path& path);
+    std::string ReadFileToString(const std::string& path);
 };

@@ -13,5 +13,5 @@ namespace ShaderIO
      * @param   path  the string path to the GLSL shader file to be compiled
      * @return  the handle for the compiled shader
      */
-    GLuint CompileShader(const fs::path& path);
+    GLuint CompileShader(const std::string& path);
 };

@@ -2,9 +2,9 @@
 
 #include <fstream>
 
-std::string FileIO::ReadFileToString(const fs::path& path)
+std::string FileIO::ReadFileToString(const std::string& path)
 {
-    std::ifstream fileStream(path.string());
+    std::ifstream fileStream(path);
     if(!fileStream.is_open())
     {
         // TODO: write error to console

@@ -33,9 +33,10 @@ static GLint GetShaderTypeByExtension(const std::string& extension)
     return -1;
 }
 
-GLuint ShaderIO::CompileShader(const fs::path& path)
+GLuint ShaderIO::CompileShader(const std::string& path)
 {
-    std::string shaderExtension = path.stem().extension().string();
+    // TODO: FIX THIS
+   // std::string shaderExtension = path.stem().extension().string();
     GLint shaderType = GetShaderTypeByExtension(shaderExtension);
     
     GLuint shaderHandle = glCreateShader(shaderType);
