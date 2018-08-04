@@ -1,4 +1,6 @@
-#include <Shading/ShaderLibrary.h>
+#include <Shading/ShaderIO.h>
+
+#include <string>
 
 static GLint GetShaderTypeByExtension(const std::string& extension)
 {
@@ -31,29 +33,18 @@ static GLint GetShaderTypeByExtension(const std::string& extension)
     return -1;
 }
 
-ShaderLibrary::ShaderLibrary()
+GLuint ShaderIO::CompileShader(const fs::path& path)
 {
-}
-
-void ShaderLibrary::AddShader(const fs::path& path)
-{
-    std::string shaderName = path.stem().string();
-    bool nameAlreadyExists = m_shaderHandles.count(shaderName);
-    
-    if (nameAlreadyExists)
-    {
-        // TODO: print warning to console
-        return;
-    }
-
     std::string shaderExtension = path.stem().extension().string();
     GLint shaderType = GetShaderTypeByExtension(shaderExtension);
+    
     GLuint shaderHandle = glCreateShader(shaderType);
     std::string shaderSource = FileIO::ReadFileToString(path);
     const GLchar* shaderSourceData = shaderSource.data();
     
     glShaderSource(shaderHandle, 1, &shaderSourceData, NULL);
     glCompileShader(shaderHandle);
+    
     GLint compiled = 0;
     glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &compiled);
     GLint infoLength = 0;
@@ -61,6 +52,7 @@ void ShaderLibrary::AddShader(const fs::path& path)
     
     if (infoLength > 1)
     {
+        // TODO: print this to console in warning or error mode as appropriate
         printf("%s during shader compilation.\n ", compiled == GL_TRUE ? "Warning" : "Error");
         char* buffer = new char[infoLength];
         glGetShaderInfoLog(shaderHandle, infoLength, NULL, buffer);
@@ -68,17 +60,5 @@ void ShaderLibrary::AddShader(const fs::path& path)
         delete[] buffer;
     }
     
-    m_shaderHandles[shaderName] = shaderHandle;
-}
-
-GLuint ShaderLibrary::GetShaderHandle(const std::string& shaderName)
-{
-    bool nameExists = m_shaderHandles.count(shaderName);
-    if (!nameExists)
-    {
-        // TODO: print warning to console
-        return -1;
-    }
-    
-    return m_shaderHandles[shaderName];
+    return shaderHandle;
 }

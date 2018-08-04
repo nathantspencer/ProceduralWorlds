@@ -17,9 +17,6 @@ inline void* ToVoidPointer(int offset)
 
 void MountainTerrainTile::Load(std::string path)
 {
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
-    
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::ifstream file(path);
