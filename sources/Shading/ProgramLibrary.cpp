@@ -1,4 +1,4 @@
-#include <Shading/ProgramLibrary.h>
+#include "ProgramLibrary.h"
 
 ProgramLibrary::ProgramLibrary() :
     m_activeProgram(-1)

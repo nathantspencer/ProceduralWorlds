@@ -3,9 +3,6 @@
 #include <string>
 
 /*! Functions for reading from and writing to files. \file
- *
- * Including this file adds an alias for the `boost::filesystem` namespace, shortening
- * it to just `fs`.
  */
 namespace FileIO
 {

@@ -1,4 +1,4 @@
-#include <Application.h>
+#include "Application.h"
 
 #include <Shading/ProgramLibrary.h>
 #include <Shading/ShaderIO.h>
@@ -17,20 +17,6 @@
 
 ProgramLibrary programLibrary;
 
-static void GLAPIENTRY
-MessageCallback( GLenum source,
-                GLenum type,
-                GLuint id,
-                GLenum severity,
-                GLsizei length,
-                const GLchar* message,
-                const void* userParam )
-{
-    fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
-            type, severity, message );
-}
-
 Application::Application()
 {
 	gl3wInit();
@@ -43,8 +29,8 @@ Application::Application()
 	glClearColor(0.30f, 0.45f, 0.68f, 1.00f);
 	glClearDepth(1.0f);
 
-    GLuint mountainTerrainVS = ShaderIO::CompileShader(fs::path("../../shaders/mountainTerrain.vs.glsl"));
-    GLuint mountainTerrainFS = ShaderIO::CompileShader(fs::path("../../shaders/mountainTerrain.fs.glsl"));
+    GLuint mountainTerrainVS = ShaderIO::CompileShader("../../shaders/mountainTerrain.vs.glsl");
+    GLuint mountainTerrainFS = ShaderIO::CompileShader("../../shaders/mountainTerrain.fs.glsl");
     std::vector<GLuint> mountainTerrainShaders = { mountainTerrainVS, mountainTerrainFS };
     programLibrary.AddProgram("mountainTerrain", mountainTerrainShaders);
     programLibrary.SetActiveProgram("mountainTerrain");

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <Common/FileIO.h>
-
 #include <GL/gl3w.h>
+#include <string>
 
 /*! Functions for compiling GLSL shaders. \file
  */

@@ -1,6 +1,7 @@
-#include <Shading/ShaderIO.h>
+#include "ShaderIO.h"
 
-#include <string>
+#include <Common/File/FileIO.h>
+#include <Common/File/Path.h>
 
 static GLint GetShaderTypeByExtension(const std::string& extension)
 {
@@ -35,8 +36,7 @@ static GLint GetShaderTypeByExtension(const std::string& extension)
 
 GLuint ShaderIO::CompileShader(const std::string& path)
 {
-    // TODO: FIX THIS
-   // std::string shaderExtension = path.stem().extension().string();
+    std::string shaderExtension = Path::GetFileExtension(path);    
     GLint shaderType = GetShaderTypeByExtension(shaderExtension);
     
     GLuint shaderHandle = glCreateShader(shaderType);

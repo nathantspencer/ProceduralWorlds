@@ -23,12 +23,12 @@ include_directories(sources)
 #=====================================================================================#
 
 file(GLOB SOURCES sources/*.cpp sources/*.h)
-file(GLOB SOURCES_COMMON sources/Common/*.cpp sources/Common/*.h)
+file(GLOB SOURCES_COMMON_FILE sources/Common/File/*.h sources/Common/File/*.cpp)
 file(GLOB SOURCES_TERRAIN sources/Terrain/*.cpp sources/Terrain/*.h)
 file(GLOB SOURCES_SHADING sources/Shading/*.cpp sources/Shading/*.h)
 
 source_group("" FILES ${SOURCES})
-source_group("Common" FILES ${SOURCES_COMMON})
+source_group("Common\\File" FILES ${SOURCES_COMMON_FILE})
 source_group("Terrain" FILES ${SOURCES_TERRAIN})
 source_group("Shading" FILES ${SOURCES_SHADING})
 
