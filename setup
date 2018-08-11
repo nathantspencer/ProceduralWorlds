@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NORMAL='\033[0m'
+
+echo -e "\n${GREEN}Making ProceduralWorld...${NORMAL}"
+rm -rf build
+mkdir build
+cd build
+
+case $OSTYPE in
+	darwin*) cmake -G Xcode .. ;;
+	*) echo -e "${RED}Platform \"${OSTYPE}\" not currently handled by setup. Aborting...${NORMAL}" ;;
+esac
+
+cd ..
+echo ""
