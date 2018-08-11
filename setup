@@ -4,17 +4,11 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NORMAL='\033[0m'
 
-<<<<<<< HEAD
 echo -e "\n${GREEN}Building ProceduralWorld...${NORMAL}"
 
 if [ ! -d "build" ]; then
 	mkdir build
 fi
-=======
-echo -e "\n${GREEN}Making ProceduralWorld...${NORMAL}"
-rm -rf build
-mkdir build
->>>>>>> dabaf9e4e24341804e080a89aae56a3ee124fece
 cd build
 
 case $OSTYPE in
