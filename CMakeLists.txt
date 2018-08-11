@@ -9,9 +9,6 @@ execute_process(COMMAND python gl3w_gen.py --root ${PROJECT_BINARY_DIR}/libs/gl3
 #|----------------------------------| INCLUDES |-------------------------------------|#
 #=====================================================================================#
 
-find_package(Boost 1.67.0 COMPONENTS system filesystem)
-include_directories(${Boost_INCLUDE_DIRS})
-
 include_directories(libs/glfw/include)
 include_directories(libs/gl3w/include)
 include_directories(libs/gl3w)
