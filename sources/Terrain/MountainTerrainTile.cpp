@@ -60,8 +60,10 @@ MountainTerrainTile::MountainTerrainTile(size_t dimension)
             vertices[i4].normal += c;
             
             indices.push_back(i1);
-            indices.push_back(i3);
             indices.push_back(i4);
+            indices.push_back(i3);
+            
+            // TODO: fix these messed up normals
             
             b = p3 - p4;
             c = glm::cross(a, b);
