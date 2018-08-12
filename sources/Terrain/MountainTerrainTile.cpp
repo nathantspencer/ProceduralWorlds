@@ -30,6 +30,7 @@ MountainTerrainTile::MountainTerrainTile(size_t dimension)
             float vx = -1.0f + 2.0f * x / (m_dimension - 1);
             float vz = -1.0f + 2.0f * y / (m_dimension - 1);
             v.position = glm::ivec3(vx, 0.0f, vz);
+            v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
             vertices.push_back(v);
         }
     }
@@ -42,42 +43,16 @@ MountainTerrainTile::MountainTerrainTile(size_t dimension)
             unsigned int i2 = i1 + 1;
             unsigned int i3 = i1 + m_dimension;
             unsigned int i4 = i2 + m_dimension;
-            
-            glm::vec3 p1 = vertices[i1].position;
-            glm::vec3 p2 = vertices[i2].position;
-            glm::vec3 p3 = vertices[i3].position;
-            glm::vec3 p4 = vertices[i4].position;
 
             indices.push_back(i1);
             indices.push_back(i2);
             indices.push_back(i4);
-        
-            glm::vec3 a = p1 - p4;
-            glm::vec3 b = p2 - p4;
-            glm::vec3 c = glm::cross(a, b);
-            vertices[i1].normal += c;
-            vertices[i2].normal += c;
-            vertices[i4].normal += c;
             
             indices.push_back(i1);
             indices.push_back(i4);
             indices.push_back(i3);
-            
-            // TODO: fix these messed up normals
-            
-            b = p3 - p4;
-            c = glm::cross(a, b);
-            vertices[i1].normal += c;
-            vertices[i3].normal += c;
-            vertices[i4].normal += c;
         }
     }
-    
-    for (int i = 0; i < vertices.size(); ++i)
-    {
-        vertices[i].normal = glm::normalize(vertices[i].normal);
-    }
-    
     m_indexSize = indices.size();
     
     glGenVertexArrays(1, &m_VAO);

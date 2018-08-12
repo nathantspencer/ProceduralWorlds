@@ -48,5 +48,6 @@ void main()
 	vec3 specular_light_2 = u_light_2_specular.xyz * u_mat_specular.xyz * pow(max(dot(r2, v), 0.0), u_mat_shininess);
 	vec3 specular_component = specular_light_1 + specular_light_2;
 
-	fragColor = vec4(ambient_component + diffuse_component + specular_component + (abs(height) / 400.0), 1.0);
+	//fragColor = vec4(ambient_component + diffuse_component + specular_component + (abs(height) / 400.0), 1.0);
+	fragColor = vec4(v_normal.xyz, 1.0);
 }
