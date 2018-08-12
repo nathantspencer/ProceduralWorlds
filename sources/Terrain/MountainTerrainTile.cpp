@@ -1,11 +1,8 @@
 #include "MountainTerrainTile.h"
 
 #include <GL/gl3w.h>
-#include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <fstream>
-#include <iostream>
 #include <vector>
 #include <map>
 
@@ -15,55 +12,71 @@ inline void* ToVoidPointer(int offset)
     return reinterpret_cast<void*>(offset_);
 }
 
-void MountainTerrainTile::Load(std::string path)
+MountainTerrainTile::MountainTerrainTile() : MountainTerrainTile(9)
 {
-    std::vector<Vertex> vertices;
+}
+
+MountainTerrainTile::MountainTerrainTile(size_t dimension)
+{
+    m_dimension = dimension;
     std::vector<unsigned int> indices;
-    std::ifstream file(path);
-    std::string str;
-    
+    std::vector<Vertex> vertices;
     Vertex v;
-    v.pos = glm::vec3();
     
-    while (std::getline(file, str))
+    for (int x = 0; x < m_dimension; ++x)
     {
-        if (strncmp(str.c_str(), "v ", 2) == 0)
+        for (int y = 0; y < m_dimension; ++y)
         {
-            sscanf(str.c_str(), "v %f %f %f", &v.pos.x, &v.pos.y, &v.pos.z);
-            v.normal = glm::vec3();
+            float vx = -1.0f + 2.0f * x / (m_dimension - 1);
+            float vz = -1.0f + 2.0f * y / (m_dimension - 1);
+            v.position = glm::ivec3(vx, 0.0f, vz);
             vertices.push_back(v);
-        }
-        else if (strncmp(str.c_str(), "f ", 2) == 0)
-        {
-            unsigned int a, b, c;
-            sscanf(str.c_str(), "f %d %d %d", &a, &b, &c);
-            indices.push_back(a - 1);
-            indices.push_back(b - 1);
-            indices.push_back(c - 1);
         }
     }
     
-    m_indexSize = indices.size();
-    for (int f = 0; f < m_indexSize / 3; ++f)
+    for (int x = 0; x < m_dimension - 1; ++x)
     {
-        unsigned int i = indices[3 * f + 0];
-        unsigned int j = indices[3 * f + 1];
-        unsigned int k = indices[3 * f + 2];
-        glm::vec3 p1 = vertices[i].pos;
-        glm::vec3 p2 = vertices[j].pos;
-        glm::vec3 p3 = vertices[k].pos;
-        glm::vec3 a = p1 - p3;
-        glm::vec3 b = p2 - p3;
-        glm::vec3 c = glm::cross(a, b);
-        vertices[i].normal += c;
-        vertices[j].normal += c;
-        vertices[k].normal += c;
+        for (int y = 0; y < m_dimension - 1; ++y)
+        {
+            unsigned int i1 = y * m_dimension + x;
+            unsigned int i2 = i1 + 1;
+            unsigned int i3 = i1 + m_dimension;
+            unsigned int i4 = i2 + m_dimension;
+            
+            glm::vec3 p1 = vertices[i1].position;
+            glm::vec3 p2 = vertices[i2].position;
+            glm::vec3 p3 = vertices[i3].position;
+            glm::vec3 p4 = vertices[i4].position;
+
+            indices.push_back(i1);
+            indices.push_back(i2);
+            indices.push_back(i4);
+        
+            glm::vec3 a = p1 - p4;
+            glm::vec3 b = p2 - p4;
+            glm::vec3 c = glm::cross(a, b);
+            vertices[i1].normal += c;
+            vertices[i2].normal += c;
+            vertices[i4].normal += c;
+            
+            indices.push_back(i1);
+            indices.push_back(i3);
+            indices.push_back(i4);
+            
+            b = p3 - p4;
+            c = glm::cross(a, b);
+            vertices[i1].normal += c;
+            vertices[i3].normal += c;
+            vertices[i4].normal += c;
+        }
     }
     
     for (int i = 0; i < vertices.size(); ++i)
     {
         vertices[i].normal = glm::normalize(vertices[i].normal);
     }
+    
+    m_indexSize = indices.size();
     
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -75,7 +88,7 @@ void MountainTerrainTile::Load(std::string path)
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(offsetof(Vertex, pos)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(offsetof(Vertex, position)));
     
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), ToVoidPointer(offsetof(Vertex, normal)));

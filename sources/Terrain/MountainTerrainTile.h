@@ -9,21 +9,23 @@ class MountainTerrainTile
 {
 public:
     
-    void Load(std::string path);
+    MountainTerrainTile();
+    MountainTerrainTile(size_t dimension);
     
     void Draw();
     
+private:
+    
     struct Vertex
     {
-        glm::vec3 pos;
+        glm::vec3 position;
         glm::vec3 normal;
     };
     
-private:
+    size_t m_dimension;
+    size_t m_indexSize;
     
     GLuint m_VAO;
     GLuint m_VBO;
     GLuint m_EBO;
-    
-    unsigned int m_indexSize;
 };

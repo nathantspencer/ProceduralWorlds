@@ -29,9 +29,9 @@ public:
 
 private:
     
-	void DrawMesh(MountainTerrainTile& object);
+	void DrawMesh(MountainTerrainTile* object);
 
-	MountainTerrainTile m_teapot;
+    std::unique_ptr<MountainTerrainTile> m_terrainTile;
 
 	unsigned int m_program;
     unsigned int m_uniform_offset;

@@ -21,6 +21,8 @@ Application::Application()
 {
 	gl3wInit();
     
+    glEnable(GL_CULL_FACE);
+    
 	const char* OpenGLversion = (const char*) glGetString(GL_VERSION);
 	const char* GLSLversion = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION);
 
@@ -62,8 +64,6 @@ Application::Application()
     m_use_phong = glGetUniformLocation(activeProgram, "u_use_phong");
     m_use_texture_map = glGetUniformLocation(activeProgram, "u_use_texture_map");
     m_camera_pos = glGetUniformLocation(activeProgram, "u_camera_pos");
-
-	m_teapot.Load("../../terrainTile.obj");
     
     m_cameraPosition = glm::vec3(0.0f, 0.0f, -50.0f);
     m_cameraAzimuth = 0.0f;
@@ -79,6 +79,8 @@ Application::Application()
     m_isKeyPressed['D'] = false;
     
     m_isMouseButtonPressed = false;
+    
+    m_terrainTile = std::make_unique<MountainTerrainTile>(9);
     
     m_light2Angle = 0.0f;
     m_light2Height = 50.0f;
@@ -248,7 +250,7 @@ void Application::Draw(float time, float aspect)
     
   //  DrawMesh(m_teapot);
 
-    DrawMesh(m_teapot);
+    DrawMesh(m_terrainTile.get());
     
     m_previousDrawMousePosition = m_currentMousePosition;
     m_lastTime = time;
@@ -273,8 +275,8 @@ void Application::SetMaterial(int materialIndex)
     glUniform4f(m_light_2_specular, 0.2, 0.2, 0.2, 1.0);
 }
 
-void Application::DrawMesh(MountainTerrainTile& object)
+void Application::DrawMesh(MountainTerrainTile* object)
 {
     glUniform1i(m_use_texture_map, 0);
-	object.Draw();
+	object->Draw();
 }
