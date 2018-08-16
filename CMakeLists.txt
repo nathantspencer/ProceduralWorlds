@@ -9,6 +9,7 @@ execute_process(COMMAND python gl3w_gen.py --root ${PROJECT_BINARY_DIR}/libs/gl3
 #|----------------------------------| INCLUDES |-------------------------------------|#
 #=====================================================================================#
 
+include_directories(libs/Boxer/include)
 include_directories(libs/glfw/include)
 include_directories(libs/gl3w/include)
 include_directories(libs/gl3w)
@@ -33,6 +34,7 @@ source_group("Shading" FILES ${SOURCES_SHADING})
 #|---------------------------------| EXTERNALS |-------------------------------------|#
 #=====================================================================================#
 
+add_subdirectory(libs/Boxer)
 add_subdirectory(libs/glfw)
 add_subdirectory(libs/gl3w)
 
@@ -47,5 +49,4 @@ add_executable(ProceduralWorld ${SOURCES})
 #|----------------------------------| LINKAGE |--------------------------------------|#
 #=====================================================================================#
 
-target_link_libraries(ProceduralWorld gl3w glfw ${OPENGL_LIBRARIES}
-${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+target_link_libraries(ProceduralWorld gl3w glfw Boxer ${OPENGL_LIBRARIES})
