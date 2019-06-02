@@ -31,8 +31,9 @@ Application::Application()
 	glClearColor(0.30f, 0.45f, 0.68f, 1.00f);
 	glClearDepth(1.0f);
 
-    GLuint mountainTerrainVS = ShaderIO::CompileShader("../../shaders/mountainTerrain.vs.glsl");
-    GLuint mountainTerrainFS = ShaderIO::CompileShader("../../shaders/mountainTerrain.fs.glsl");
+	// TODO: better way to get paths for these. not consistent across platforms
+    GLuint mountainTerrainVS = ShaderIO::CompileShader("../shaders/mountainTerrain.vs.glsl");
+    GLuint mountainTerrainFS = ShaderIO::CompileShader("../shaders/mountainTerrain.fs.glsl");
     std::vector<GLuint> mountainTerrainShaders = { mountainTerrainVS, mountainTerrainFS };
     programLibrary.AddProgram("mountainTerrain", mountainTerrainShaders);
     programLibrary.SetActiveProgram("mountainTerrain");
@@ -263,7 +264,7 @@ void Application::SetShadingModel(int shadingModel)
 
 void Application::SetMaterial(int materialIndex)
 {
-    glUniform4f(m_mat_ambient, 0.025, 0.175, 0.05, 1.0);
+    glUniform4f(m_mat_ambient, 0.025f, 0.175f, 0.05f, 1.0f);
     glUniform4f(m_mat_diffuse, 0.5, 0.7, 0.5, 1.0);
     glUniform4f(m_mat_specular, 0.1, 0.2, 0.1, 1.0);
     glUniform1f(m_mat_shininess, 1.0);

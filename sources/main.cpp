@@ -4,6 +4,21 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 
+void GLAPIENTRY
+MessageCallback(GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam)
+{
+	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+		type, severity, message);
+}
+
+
 int main()
 {
 	GLFWwindow* window;
@@ -24,8 +39,15 @@ int main()
     window = glfwCreateWindow(1280, 800, "ProceduralWorlds: Mountains", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	
+	// TODO: don't use shared ptr here
     std::shared_ptr<Application> application = std::make_shared<Application>();
     glfwSetWindowUserPointer(window, (void*) application.get());
+
+	// TODO: define DEBUG in debug...
+// #ifdef DEBUG
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback, 0);
+	// #endif
     
     glfwSetKeyCallback(window, [](GLFWwindow* window, int keycode, int scancode, int event, int modifiers)
     {
