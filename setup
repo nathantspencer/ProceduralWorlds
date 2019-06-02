@@ -16,7 +16,7 @@ git submodule update --init --recursive
 #====================| BUILD PROJECT |======================#
 #===========================================================#
 
-echo -e "${GREEN}Building ProceduralWorld...${NORMAL}"
+echo -e "${GREEN}Building ProceduralWorlds...${NORMAL}"
 
 if [ ! -d "build" ]; then
 	mkdir build

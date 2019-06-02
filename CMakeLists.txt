@@ -21,11 +21,13 @@ include_directories(sources)
 #=====================================================================================#
 
 file(GLOB SOURCES sources/*.cpp sources/*.h)
+file(GLOB SOURCES_CAMERA sources/Camera/*.h sources/Camera/*.cpp)
 file(GLOB SOURCES_COMMON_FILE sources/Common/File/*.h sources/Common/File/*.cpp)
 file(GLOB SOURCES_TERRAIN sources/Terrain/*.cpp sources/Terrain/*.h)
 file(GLOB SOURCES_SHADING sources/Shading/*.cpp sources/Shading/*.h)
 
 source_group("" FILES ${SOURCES})
+source_group("Camera" FILES ${SOURCES_CAMERA})
 source_group("Common\\File" FILES ${SOURCES_COMMON_FILE})
 source_group("Terrain" FILES ${SOURCES_TERRAIN})
 source_group("Shading" FILES ${SOURCES_SHADING})
@@ -43,10 +45,10 @@ add_subdirectory(libs/gl3w)
 #=====================================================================================#
 
 file(GLOB_RECURSE SOURCES sources/*.cpp sources/*.h)
-add_executable(ProceduralWorld ${SOURCES})
+add_executable(ProceduralWorlds ${SOURCES})
 
 #=====================================================================================#
 #|----------------------------------| LINKAGE |--------------------------------------|#
 #=====================================================================================#
 
-target_link_libraries(ProceduralWorld gl3w glfw Boxer ${OPENGL_LIBRARIES})
+target_link_libraries(ProceduralWorlds gl3w glfw Boxer ${OPENGL_LIBRARIES})
