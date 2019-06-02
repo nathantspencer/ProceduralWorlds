@@ -39,6 +39,11 @@ Application::Application()
     programLibrary.SetActiveProgram("mountainTerrain");
     GLuint activeProgram = programLibrary.GetActiveProgram();
 
+	int terrainTileDimensions = 9;
+	m_terrainTile = std::make_unique<MountainTerrainTile>(terrainTileDimensions);
+	m_terrainTileDimensions = glGetUniformLocation(activeProgram, "u_tileDimensions");
+	glUniform1i(m_terrainTileDimensions, terrainTileDimensions);
+
 	m_uniform_transform = glGetUniformLocation(activeProgram, "u_transform");
 	m_uniform_viewProjection = glGetUniformLocation(activeProgram, "u_viewProjection");
 	
@@ -80,8 +85,6 @@ Application::Application()
     m_isKeyPressed['D'] = false;
     
     m_isMouseButtonPressed = false;
-    
-    m_terrainTile = std::make_unique<MountainTerrainTile>(9);
     
     m_light2Angle = 0.0f;
     m_light2Height = 50.0f;

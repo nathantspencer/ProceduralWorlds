@@ -48,6 +48,8 @@ private:
     float       m_cameraAzimuth;
     float       m_cameraAltitude;
     
+	GLuint m_terrainTileDimensions;
+
     unsigned int m_camera_pos;
     unsigned int m_use_phong;
     unsigned int m_mat_ambient;

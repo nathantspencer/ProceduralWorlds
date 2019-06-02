@@ -1,5 +1,7 @@
 #version 410
 
+uniform int u_tileDimensions;
+
 uniform vec4 u_camera_pos;
 uniform vec4 u_mat_ambient;
 uniform vec4 u_mat_diffuse;
@@ -81,21 +83,53 @@ float ridge(vec2 st)
 void main()
 {
 	int offsetX = (gl_InstanceID / 100) - 50;
-	int offsetY = (gl_InstanceID % 100) - 50;
+	int offsetZ = (gl_InstanceID % 100) - 50;
 
-	vec2 st = vec2(a_position.x + 2.0 * offsetX, a_position.z + 2.0 * offsetY);
+	vec2 st = vec2(a_position.x + 2.0 * offsetX, a_position.z + 2.0 * offsetZ);
 	st *= NOISE_GRANULARITY;
 	vec3 heightMappedPos = a_position;
 	heightMappedPos.y += ridge(st);
-
+	
+	// Calculate normal
+	// TODO: clean this up
+	
+	float testPointOffset = 1.0f / (u_tileDimensions - 1);
+	vec3 testPoint1 = vec3(a_position.x - testPointOffset, 0.0, a_position.z);
+	vec3 testPoint2 = vec3(a_position.x + testPointOffset, 0.0,  a_position.z);
+	vec3 testPoint3 = vec3(a_position.x, 0.0, a_position.z - testPointOffset);
+	vec3 testPoint4 = vec3(a_position.x, 0.0, a_position.z + testPointOffset);
+	
+	st = vec2(testPoint1.x + 2.0 * offsetX, testPoint1.z + 2.0 * offsetZ);
+	st *= NOISE_GRANULARITY;
+	testPoint1.y = ridge(st);
+	
+	st = vec2(testPoint2.x + 2.0 * offsetX, testPoint2.z + 2.0 * offsetZ);
+	st *= NOISE_GRANULARITY;
+	testPoint2.y = ridge(st);
+	
+	st = vec2(testPoint3.x + 2.0 * offsetX, testPoint3.z + 2.0 * offsetZ);
+	st *= NOISE_GRANULARITY;
+	testPoint3.y = ridge(st);
+	
+	st = vec2(testPoint4.x + 2.0 * offsetX, testPoint4.z + 2.0 * offsetZ);
+	st *= NOISE_GRANULARITY;
+	testPoint4.y = ridge(st);
+	
+	vec3 testVector1 = cross(testPoint4 - heightMappedPos, testPoint1 - heightMappedPos);
+	vec3 testVector2 = cross(testPoint3 - heightMappedPos, testPoint2 - heightMappedPos);
+	
+	vec3 normal = normalize(testVector1 + testVector2);
+	
+	//
+	
 	height = heightMappedPos.y;
 
 	heightMappedPos *= 10.0f;
 	heightMappedPos.x += 20.0f * offsetX;
-	heightMappedPos.z += 20.0f * offsetY;
+	heightMappedPos.z += 20.0f * offsetZ;
 	heightMappedPos.y -= 10.0f;
 
-	v_normal = normalize(u_transform * vec4(a_normal, 0.0));
+	v_normal = normalize(u_transform * vec4(normal, 0.0));
 	v_pos = vec4(heightMappedPos, 1.0);
 
 	gl_Position = u_viewProjection * v_pos;
