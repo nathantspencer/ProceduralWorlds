@@ -80,57 +80,50 @@ float ridge(vec2 st)
 	return ridges;
 }
 
+// Calculate normal for vertex by testing points a half-step away
+vec3 calculateNormal(vec3 position)
+{
+	int tileOffsetX = (gl_InstanceID / 100) - 50;
+	int tileOffsetZ = (gl_InstanceID % 100) - 50;
+
+	float testPointOffset = 1.0f / (u_tileDimensions - 1);
+	mat4x3 testPoints;
+	testPoints[0] = vec3(position.x - testPointOffset, 0.0, position.z);
+	testPoints[1] = vec3(position.x + testPointOffset, 0.0,  position.z);
+	testPoints[2] = vec3(position.x, 0.0, position.z - testPointOffset);
+	testPoints[3] = vec3(position.x, 0.0, position.z + testPointOffset);
+	
+	for(int i = 0; i < 4; ++i)
+	{
+		vec2 st = vec2(testPoints[i].x + 2.0 * tileOffsetX, testPoints[i].z + 2.0 * tileOffsetZ);
+		st *= NOISE_GRANULARITY;
+		testPoints[i].y = ridge(st);
+	}
+	
+	vec3 upLeftNormal = cross(testPoints[3] - position, testPoints[0] - position);
+	vec3 downRightNormal = cross(testPoints[2] - position, testPoints[1] - position);
+	
+	return normalize(upLeftNormal + downRightNormal);
+}
+
 void main()
 {
-	int offsetX = (gl_InstanceID / 100) - 50;
-	int offsetZ = (gl_InstanceID % 100) - 50;
+	int tileOffsetX = (gl_InstanceID / 100) - 50;
+	int tileOffsetZ = (gl_InstanceID % 100) - 50;
 
-	vec2 st = vec2(a_position.x + 2.0 * offsetX, a_position.z + 2.0 * offsetZ);
+	vec2 st = vec2(a_position.x + 2.0 * tileOffsetX, a_position.z + 2.0 * tileOffsetZ);
 	st *= NOISE_GRANULARITY;
-	vec3 heightMappedPos = a_position;
-	heightMappedPos.y += ridge(st);
-	
-	// Calculate normal
-	// TODO: clean this up
-	
-	float testPointOffset = 1.0f / (u_tileDimensions - 1);
-	vec3 testPoint1 = vec3(a_position.x - testPointOffset, 0.0, a_position.z);
-	vec3 testPoint2 = vec3(a_position.x + testPointOffset, 0.0,  a_position.z);
-	vec3 testPoint3 = vec3(a_position.x, 0.0, a_position.z - testPointOffset);
-	vec3 testPoint4 = vec3(a_position.x, 0.0, a_position.z + testPointOffset);
-	
-	st = vec2(testPoint1.x + 2.0 * offsetX, testPoint1.z + 2.0 * offsetZ);
-	st *= NOISE_GRANULARITY;
-	testPoint1.y = ridge(st);
-	
-	st = vec2(testPoint2.x + 2.0 * offsetX, testPoint2.z + 2.0 * offsetZ);
-	st *= NOISE_GRANULARITY;
-	testPoint2.y = ridge(st);
-	
-	st = vec2(testPoint3.x + 2.0 * offsetX, testPoint3.z + 2.0 * offsetZ);
-	st *= NOISE_GRANULARITY;
-	testPoint3.y = ridge(st);
-	
-	st = vec2(testPoint4.x + 2.0 * offsetX, testPoint4.z + 2.0 * offsetZ);
-	st *= NOISE_GRANULARITY;
-	testPoint4.y = ridge(st);
-	
-	vec3 testVector1 = cross(testPoint4 - heightMappedPos, testPoint1 - heightMappedPos);
-	vec3 testVector2 = cross(testPoint3 - heightMappedPos, testPoint2 - heightMappedPos);
-	
-	vec3 normal = normalize(testVector1 + testVector2);
-	
-	//
-	
-	height = heightMappedPos.y;
+	vec3 heightMappedPosition = a_position;
+	heightMappedPosition.y += ridge(st);
+	vec3 normal = calculateNormal(heightMappedPosition);
 
-	heightMappedPos *= 10.0f;
-	heightMappedPos.x += 20.0f * offsetX;
-	heightMappedPos.z += 20.0f * offsetZ;
-	heightMappedPos.y -= 10.0f;
+	heightMappedPosition *= 10.0f;
+	heightMappedPosition.x += 20.0f * tileOffsetX;
+	heightMappedPosition.z += 20.0f * tileOffsetZ;
+	heightMappedPosition.y -= 10.0f;
 
 	v_normal = normalize(u_transform * vec4(normal, 0.0));
-	v_pos = vec4(heightMappedPos, 1.0);
+	v_pos = vec4(heightMappedPosition, 1.0);
 
 	gl_Position = u_viewProjection * v_pos;
 }

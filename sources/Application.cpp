@@ -250,10 +250,6 @@ void Application::Draw(float time, float aspect)
 
 	glUniformMatrix4fv(m_uniform_viewProjection, 1, GL_FALSE, &viewProjection[0][0]);
 
-	//DrawMesh(m_cow);
-    
-  //  DrawMesh(m_teapot);
-
     DrawMesh(m_terrainTile.get());
     
     m_previousDrawMousePosition = m_currentMousePosition;
