@@ -17,12 +17,13 @@ public:
 	|*/
 	enum Planes
 	{
-		NEAR   = 0,
-		FAR    = 1,
-		LEFT   = 2,
-		RIGHT  = 3,
-		TOP    = 4,
-		BOTTOM = 5
+		NEAR        = 0,
+		FAR         = 1,
+		LEFT        = 2,
+		RIGHT       = 3,
+		TOP         = 4,
+		BOTTOM      = 5,
+		PLANE_COUNT = 6
 	};
 
 	/*|  Enumeration of frustum points.
@@ -40,7 +41,8 @@ public:
 		NEAR_TOP_LEFT     = 4,
 		NEAR_TOP_RIGHT    = 5,
 		NEAR_BOTTOM_LEFT  = 6,
-		NEAR_BOTTOM_RIGHT = 7
+		NEAR_BOTTOM_RIGHT = 7,
+		POINT_COUNT       = 8
 	};
 
 	/*|  Constructs a frustum.
@@ -60,15 +62,15 @@ public:
 
 	/*|  Retrieves the transformed frustum planes.
 	|*|
-	|*|  Use sparingly; each plane is transformed on demand.
+	|*|  Use sparingly where possible; each plane is transformed on demand.
 	|*|
 	|*|  @return  a vector of the six frustum planes
 	|*/
 	std::vector<glm::vec4> GetPlanes();
 
-	/*|  Retrieves a the transformed frustum points.
+	/*|  Retrieves the transformed frustum points.
 	|*|
-	|*|  Use sparingly; each point is transformed on demand.
+	|*|  Use sparingly where possible; each point is transformed on demand.
 	|*|
 	|*|  @return  a vector of the eight frusum points
 	|*/
