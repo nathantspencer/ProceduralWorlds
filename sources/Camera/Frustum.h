@@ -17,13 +17,13 @@ public:
 	|*/
 	enum Planes
 	{
-		NEAR        = 0,
-		FAR         = 1,
-		LEFT        = 2,
-		RIGHT       = 3,
-		TOP         = 4,
-		BOTTOM      = 5,
-		PLANE_COUNT = 6
+		NEAR_PLANE   = 0,
+		FAR_PLANE    = 1,
+		LEFT_PLANE   = 2,
+		RIGHT_PLANE  = 3,
+		TOP_PLANE    = 4,
+		BOTTOM_PLANE = 5,
+		PLANE_COUNT  = 6
 	};
 
 	/*|  Enumeration of frustum points.

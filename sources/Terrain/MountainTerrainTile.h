@@ -1,9 +1,10 @@
 #pragma once
 
-#include <string>
-#include <map>
 #include <GL/gl3w.h>
 #include <glm/glm.hpp>
+
+#include <map>
+#include <string>
 
 class MountainTerrainTile
 {
@@ -13,6 +14,8 @@ public:
     MountainTerrainTile(size_t dimension);
     
     void Draw();
+
+	std::pair<glm::vec3, glm::vec3> GetBoundingBox() const;
     
 private:
     
@@ -22,6 +25,9 @@ private:
         glm::vec3 normal;
     };
     
+	glm::vec3 m_min;
+	glm::vec3 m_max;
+
     size_t m_dimension;
     size_t m_indexSize;
     

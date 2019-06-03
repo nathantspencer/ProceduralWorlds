@@ -43,24 +43,24 @@ Frustum::Frustum(float nearDistance, float farDistance, float fov, float aspect)
 	m_points[NEAR_BOTTOM_RIGHT] = nearBottomRight;
 
 	// Calculate frustum planes
-	m_planes[NEAR] = glm::vec4(cameraForward, nearDistance);
-	m_planes[FAR] = glm::vec4(-cameraForward, farDistance);
+	m_planes[NEAR_PLANE] = glm::vec4(cameraForward, nearDistance);
+	m_planes[FAR_PLANE] = glm::vec4(-cameraForward, farDistance);
 
 	glm::vec3 leftPlaneNormal = glm::normalize(glm::cross(farBottomLeft - nearBottomLeft, farTopLeft - farBottomLeft));
 	float leftPlaneOffset = glm::dot(leftPlaneNormal, nearBottomLeft);
-	m_planes[LEFT] = glm::vec4(leftPlaneNormal, leftPlaneOffset);
+	m_planes[LEFT_PLANE] = glm::vec4(leftPlaneNormal, leftPlaneOffset);
 
 	glm::vec3 rightPlaneNormal = glm::normalize(glm::cross(farTopRight - nearTopRight, farBottomRight - farTopRight));
 	float rightPlaneOffset = glm::dot(rightPlaneNormal, nearTopRight);
-	m_planes[RIGHT] = glm::vec4(rightPlaneNormal, rightPlaneOffset);
+	m_planes[RIGHT_PLANE] = glm::vec4(rightPlaneNormal, rightPlaneOffset);
 
 	glm::vec3 topPlaneNormal = glm::normalize(glm::cross(farTopLeft - nearTopLeft, farTopRight - farTopLeft));
 	float topPlaneOffset = glm::dot(topPlaneNormal, nearTopLeft);
-	m_planes[TOP] = glm::vec4(topPlaneNormal, leftPlaneOffset);
+	m_planes[TOP_PLANE] = glm::vec4(topPlaneNormal, leftPlaneOffset);
 
 	glm::vec3 bottomPlaneNormal = glm::normalize(glm::cross(farBottomRight - nearBottomRight, farBottomLeft - farBottomRight));
 	float bottomPlaneOffset = glm::dot(bottomPlaneNormal, nearBottomRight);
-	m_planes[BOTTOM] = glm::vec4(bottomPlaneNormal, bottomPlaneOffset);
+	m_planes[BOTTOM_PLANE] = glm::vec4(bottomPlaneNormal, bottomPlaneOffset);
 
 	m_transformedPoints = m_points;
 	m_transformedPlanes = m_planes;

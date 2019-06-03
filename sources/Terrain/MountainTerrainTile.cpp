@@ -18,6 +18,9 @@ MountainTerrainTile::MountainTerrainTile() : MountainTerrainTile(9)
 
 MountainTerrainTile::MountainTerrainTile(size_t dimension)
 {
+	m_min = glm::vec3(std::numeric_limits<float>::max());
+	m_min = glm::vec3(std::numeric_limits<float>::min());
+
     m_dimension = dimension;
     std::vector<unsigned int> indices;
     std::vector<Vertex> vertices;
@@ -25,14 +28,17 @@ MountainTerrainTile::MountainTerrainTile(size_t dimension)
     
     for (int x = 0; x < m_dimension; ++x)
     {
-        for (int y = 0; y < m_dimension; ++y)
-        {
-            float vx = -1.0f + 2.0f * x / (m_dimension - 1);
-            float vz = -1.0f + 2.0f * y / (m_dimension - 1);
-            v.position = glm::ivec3(vx, 0.0f, vz);
-            v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            vertices.push_back(v);
-        }
+		for (int y = 0; y < m_dimension; ++y)
+		{
+			float vx = -1.0f + 2.0f * x / (m_dimension - 1);
+			float vz = -1.0f + 2.0f * y / (m_dimension - 1);
+			v.position = glm::ivec3(vx, 0.0f, vz);
+			v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+			vertices.push_back(v);
+
+			m_min = glm::min(m_min, v.position);
+			m_max = glm::max(m_max, v.position);
+		}
     }
     
     for (int x = 0; x < m_dimension - 1; ++x)
@@ -79,4 +85,9 @@ void MountainTerrainTile::Draw()
     glBindVertexArray(m_VAO);
     glDrawElementsInstanced(GL_TRIANGLES, m_indexSize, GL_UNSIGNED_INT, 0, 10000);
     glBindVertexArray(0);
+}
+
+std::pair<glm::vec3, glm::vec3> MountainTerrainTile::GetBoundingBox() const
+{
+	return std::pair<glm::vec3, glm::vec3>();
 }

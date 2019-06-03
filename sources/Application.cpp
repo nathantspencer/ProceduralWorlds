@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include <Camera/Frustum.h>
 #include <Shading/ProgramLibrary.h>
 #include <Shading/ShaderIO.h>
 #include <Terrain/MountainTerrainTile.h>
@@ -250,8 +251,14 @@ void Application::Draw(float time, float aspect)
 
 	glUniformMatrix4fv(m_uniform_viewProjection, 1, GL_FALSE, &viewProjection[0][0]);
 
-    DrawMesh(m_terrainTile.get());
-    
+	// Testing frustum culling...
+	Frustum frustum = Frustum(5.0f, 10000.0f, 45.0f, aspect);
+	frustum.SetTransform(glm::inverse(view));
+	if (frustum.IsBoxInFrustum(m_terrainTile.get()->GetBoundingBox().first, m_terrainTile.get()->GetBoundingBox().second))
+	{
+		DrawMesh(m_terrainTile.get());
+	}
+
     m_previousDrawMousePosition = m_currentMousePosition;
     m_lastTime = time;
 }
