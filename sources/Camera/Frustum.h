@@ -9,13 +9,48 @@
 class Frustum
 {
 public:
+	/*|  Enumeration of frustum planes.
+	|*|
+	|*|  Use as indices to the frustum plane list.
+	|*|  
+	|*|  @see GetPlanes
+	|*/
+	enum Planes
+	{
+		NEAR   = 0,
+		FAR    = 1,
+		LEFT   = 2,
+		RIGHT  = 3,
+		TOP    = 4,
+		BOTTOM = 5
+	};
+
+	/*|  Enumeration of frustum points.
+	|*|
+	|*|  Use as indices to the frustum point list.
+	|*|
+	|*|  @see GetPoints
+	|*/
+	enum Points
+	{
+		FAR_TOP_LEFT      = 0,
+		FAR_TOP_RIGHT     = 1,
+		FAR_BOTTOM_LEFT   = 2,
+		FAR_BOTTOM_RIGHT  = 3,
+		NEAR_TOP_LEFT     = 4,
+		NEAR_TOP_RIGHT    = 5,
+		NEAR_BOTTOM_LEFT  = 6,
+		NEAR_BOTTOM_RIGHT = 7
+	};
+
 	/*|  Constructs a frustum.
 	|*|
 	|*|  @param  nearDistance  distance to the near plane
 	|*|  @param  farDistance  distance to the far plane
 	|*|  @param  fov  field of view in degrees
+	|*|  @param  aspect  view aspect ratio
 	|*/
-	Frustum(float nearDistance, float farDistance, float fov);
+	Frustum(float nearDistance, float farDistance, float fov, float aspect);
 
 	/*|  Sets the transform for the frustum.
 	|*|
@@ -25,7 +60,7 @@ public:
 
 	/*|  Retrieves the transformed frustum planes.
 	|*|
-	|*|  Ordered near, far, left, right, top, bottom.
+	|*|  Use sparingly; each plane is transformed on demand.
 	|*|
 	|*|  @return  a vector of the six frustum planes
 	|*/
@@ -33,7 +68,7 @@ public:
 
 	/*|  Retrieves a the transformed frustum points.
 	|*|
-	|*|  TODO: determine and document order
+	|*|  Use sparingly; each point is transformed on demand.
 	|*|
 	|*|  @return  a vector of the eight frusum points
 	|*/
@@ -41,6 +76,6 @@ public:
 
 private:
 	glm::mat4 m_transform;
-	std::vector<glm::vec4> planes;
-	std::vector<glm::vec3> points;
+	std::vector<glm::vec4> m_planes;
+	std::vector<glm::vec3> m_points;
 };
