@@ -61,29 +61,51 @@ Frustum::Frustum(float nearDistance, float farDistance, float fov, float aspect)
 	glm::vec3 bottomPlaneNormal = glm::normalize(glm::cross(farBottomRight - nearBottomRight, farBottomLeft - farBottomRight));
 	float bottomPlaneOffset = glm::dot(bottomPlaneNormal, nearBottomRight);
 	m_planes[BOTTOM] = glm::vec4(bottomPlaneNormal, bottomPlaneOffset);
+
+	m_transformedPoints = m_points;
+	m_transformedPlanes = m_planes;
 }
 
-void Frustum::SetTransform(const glm::mat4 transform)
+void Frustum::SetTransform(const glm::mat4& transform)
 {
 	m_transform = transform;
-}
 
-std::vector<glm::vec4> Frustum::GetPlanes()
-{
-	std::vector<glm::vec4> transformedPlanes(PLANE_COUNT);
-	for (int i = 0; i < PLANE_COUNT; ++i)
-	{
-		transformedPlanes[i] = glm::transpose(glm::inverse(m_transform)) * m_planes[i];
-	}
-	return transformedPlanes;
-}
-
-std::vector<glm::vec3> Frustum::GetPoints()
-{
-	std::vector<glm::vec3> transformedPoints(POINT_COUNT);
 	for (int i = 0; i < POINT_COUNT; ++i)
 	{
-		transformedPoints[i] = glm::vec3(m_transform * glm::vec4(m_points[i], 1.0f));
+		m_transformedPoints[i] = glm::vec3(m_transform * glm::vec4(m_points[i], 1.0f));
 	}
-	return transformedPoints;
+
+	for (int i = 0; i < PLANE_COUNT; ++i)
+	{
+		m_transformedPlanes[i] = glm::transpose(glm::inverse(m_transform)) * m_planes[i];
+	}
+}
+
+std::vector<glm::vec4> Frustum::GetPlanes() const
+{
+	return m_transformedPlanes;
+}
+
+std::vector<glm::vec3> Frustum::GetPoints() const
+{
+	return m_transformedPoints;
+}
+
+bool Frustum::IsBoxInFrustum(const glm::vec3& min, const glm::vec3& max) const
+{
+	for (int i = 0; i < PLANE_COUNT; i++)
+	{
+		int outsidePlaneCount = 0;
+		for (int j = 0; j < 8; ++j)
+		{
+			auto testPoint = glm::vec4(j % 2 ? min.x : max.x, j % 4 ? min.y : max.y, j % 8 ? min.z : max.z, 1.0f);
+			outsidePlaneCount += glm::dot(m_transformedPlanes[i], testPoint) < 0.0f ? 1 : 0;
+		}
+		if (outsidePlaneCount == 8)
+		{
+			return false;
+		}
+	}
+	return true;
+	// TODO: check against points as well, see [https://www.iquilezles.org/www/articles/frustumcorrect/frustumcorrect.htm]
 }

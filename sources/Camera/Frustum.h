@@ -58,26 +58,35 @@ public:
 	|*|
 	|*|  @param  transform  frustum's transformation matrix
 	|*/
-	void SetTransform(const glm::mat4 transform);
+	void SetTransform(const glm::mat4& transform);
 
 	/*|  Retrieves the transformed frustum planes.
 	|*|
-	|*|  Use sparingly where possible; each plane is transformed on demand.
-	|*|
 	|*|  @return  a vector of the six frustum planes
 	|*/
-	std::vector<glm::vec4> GetPlanes();
+	std::vector<glm::vec4> GetPlanes() const;
 
 	/*|  Retrieves the transformed frustum points.
 	|*|
-	|*|  Use sparingly where possible; each point is transformed on demand.
-	|*|
-	|*|  @return  a vector of the eight frusum points
+	|*|  @return  a vector of the eight frustum points
 	|*/
-	std::vector<glm::vec3> GetPoints();
+	std::vector<glm::vec3> GetPoints() const;
+
+	/*|  Tests whether some portion of a bounding box is within the frustum.
+	|*|
+	|*|  @param  min  the minimum coordinate of the tested bounding box
+	|*|  @param  max  the maximum coordinate of the tested bounding box
+	|*|
+	|*|  @return  true if a portion of the bounding box is within frustum, false otherwise
+	|*/
+	bool IsBoxInFrustum(const glm::vec3& min, const glm::vec3& max) const;
 
 private:
 	glm::mat4 m_transform;
+
 	std::vector<glm::vec4> m_planes;
+	std::vector<glm::vec4> m_transformedPlanes;
+	
 	std::vector<glm::vec3> m_points;
+	std::vector<glm::vec3> m_transformedPoints;
 };
